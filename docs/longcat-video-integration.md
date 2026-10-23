@@ -14,7 +14,7 @@ The hosted continuation endpoint is not currently confirmed in the provider docu
 
 ## Configuration
 
-Set `FAL_KEY` only in the server-side environment of a non-production preview after explicit approval. Never use a `NEXT_PUBLIC_` prefix for this key. No secrets are created or changed by this code change.
+Set `FAL_KEY` only in the server-side environment of a non-production preview after explicit approval. Never use a `NEXT_PUBLIC_` prefix for this key. The API also requires `LONGCAT_VIDEO_ENABLED=true` as an explicit kill-switch; keep it unset or false until a controlled test is approved. No secrets or environment variables are created or changed by this code change.
 
 ## Request lifecycle
 
