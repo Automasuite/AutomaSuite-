@@ -158,7 +158,7 @@ export async function GET(request: NextRequest) {
     const result = await resultResponse.json().catch(() => ({}));
     if (!resultResponse.ok) return jsonError("Generation completed, but the result could not be retrieved.", resultResponse.status);
 
-    const videoUrl = result?.video?.url ?? result?.output?.video?.url ?? result?.videos?.[0]?.url ?? null;
+    const videoUrl = (typeof result?.video === "string" ? result.video : result?.video?.url) ?? result?.output?.video?.url ?? result?.videos?.[0]?.url ?? null;
     if (typeof videoUrl !== "string") return NextResponse.json({ status: "COMPLETED", result });
     return NextResponse.json({ status: "COMPLETED", videoUrl, result });
   } catch {
