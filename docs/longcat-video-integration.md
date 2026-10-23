@@ -4,6 +4,8 @@ This integration adds an isolated Video Studio route and server-side queue API. 
 
 ## Provider
 
+The model's official source is [Meituan LongCat-Video](https://github.com/meituan-longcat/LongCat-Video). This app uses fal.ai as a third-party hosted inference provider; fal is not Meituan's official API service. See the [fal text-to-video API](https://fal.ai/models/fal-ai/longcat-video/text-to-video/480p/api), [image-to-video API](https://fal.ai/models/fal-ai/longcat-video/image-to-video/480p/api), and [avatar API](https://fal.ai/models/fal-ai/longcat-single-avatar/image-audio-to-video/api).
+
 The adapter targets fal.ai hosted endpoints for the Meituan LongCat video model family:
 
 - Text-to-video: `fal-ai/longcat-video/text-to-video/480p` and `/720p`
@@ -28,5 +30,6 @@ Set `FAL_KEY` only in the server-side environment of a non-production preview af
 - Safety checker remains enabled.
 - Input URLs are validated as HTTP(S); assets must be reachable by the provider.
 - The API key is only read on the server.
+- Avatar result parsing accepts both the documented string URL response and the file-object response shape.
 - Provider costs may apply per generation. Add user authentication, rate limiting, per-user quotas, and durable job history before exposing this feature publicly.
 - Test endpoint names and queue response shapes against the provider before merging. Do not deploy or merge without explicit approval.
