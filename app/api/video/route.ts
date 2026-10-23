@@ -17,8 +17,8 @@ const MODELS = {
     "720p": "fal-ai/longcat-single-avatar/image-audio-to-video",
   },
   "continuation": {
-    "480p": "fal-ai/longcat-video/video-continuation/480p",
-    "720p": "fal-ai/longcat-video/video-continuation/720p",
+    "480p": "",
+    "720p": "",
   },
 } as const;
 
@@ -42,7 +42,11 @@ function isHttpUrl(value: unknown): value is string {
 function modelFor(mode: unknown, resolution: unknown): string | null {
   if (typeof mode !== "string" || !(mode in MODELS)) return null;
   const selectedResolution = resolution === "720p" ? "720p" : "480p";
-  return MODELS[mode as Mode][selectedResolution as Resolution];
+  if (mode === "continuation") {
+    const configured = process.env.LONGCAT_CONTINUATION_MODEL;
+    return configured && /^fal-ai\\/longcat-video\\/[a-z0-9/-]+$/.test(configured) ? configured : null;
+  }
+  return MODELS[mode as Exclude<Mode, "continuation">][selectedResolution as Resolution];
 }
 
 function inputFor(mode: Mode, body: Record<string, unknown>) {
@@ -92,6 +96,7 @@ export async function POST(request: NextRequest) {
   const mode = body.mode as Mode;
   const resolution = body.resolution === "720p" ? "720p" : "480p";
   const model = modelFor(mode, resolution);
+  if (!model && mode === "continuation") return jsonError("Video continuation is not enabled yet: the hosted provider endpoint must be confirmed and configured first.", 503);
   if (!model) return jsonError("Unsupported generation mode.", 400);
 
   let input: Record<string, unknown>;
@@ -128,6 +133,7 @@ export async function GET(request: NextRequest) {
   const mode = params.get("mode") as Mode | null;
   const resolution = params.get("resolution") === "720p" ? "720p" : "480p";
   const model = modelFor(mode, resolution);
+  if (mode === "continuation" && !model) return jsonError("Video continuation is not enabled yet: the hosted provider endpoint must be confirmed and configured first.", 503);
   if (!requestId || !model || !/^[a-zA-Z0-9_-]{8,128}$/.test(requestId)) {
     return jsonError("A valid request ID and generation mode are required.", 400);
   }
