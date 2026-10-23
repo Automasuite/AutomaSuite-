@@ -44,7 +44,7 @@ function modelFor(mode: unknown, resolution: unknown): string | null {
   const selectedResolution = resolution === "720p" ? "720p" : "480p";
   if (mode === "continuation") {
     const configured = process.env.LONGCAT_CONTINUATION_MODEL;
-    return configured && /^fal-ai\\/longcat-video\\/[a-z0-9/-]+$/.test(configured) ? configured : null;
+    return configured && /^fal-ai\/longcat-video\/[a-z0-9/-]+$/.test(configured) ? configured : null;
   }
   return MODELS[mode as Exclude<Mode, "continuation">][selectedResolution as Resolution];
 }
