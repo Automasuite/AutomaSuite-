@@ -69,6 +69,7 @@ export default function Home() {
       <div className="workspace-switch"><span className="workspace-avatar">T</span><span><b>Taiwo’s workspace</b><small>Growth workspace</small></span><span className="chevron">⌄</span></div>
       <div className="nav-label">MAIN MENU</div>
       <nav className="nav-list">{nav.map((item) => <button key={item.name} className={view === item.name ? "nav-item active" : "nav-item"} onClick={() => setView(item.name)}><span className="nav-icon">{item.icon}</span>{item.name}{item.name === "Leads" && <span className="nav-count">{leads.length}</span>}</button>)}</nav>
+      <a className="nav-item" href="/video-studio"><span className="nav-icon">▶</span>Video Studio</a>
       <div className="sidebar-bottom">
         <div className="help-card"><div className="help-icon">✦</div><b>Make every lead count.</b><p>Focus on the signals that make outreach relevant.</p><button onClick={() => setView("Signals")}>Explore lead signals <span>→</span></button></div>
         <div className="profile"><div className="profile-avatar">TO</div><div><b>Taiwo Obanowa</b><small>Workspace owner</small></div><button className="dots" aria-label="Profile menu">···</button></div>
