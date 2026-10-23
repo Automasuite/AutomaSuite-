@@ -10,7 +10,7 @@ The adapter targets fal.ai hosted endpoints for the Meituan LongCat video model 
 - Image-to-video: `fal-ai/longcat-video/image-to-video/480p` and `/720p`
 - Audio-driven single avatar: `fal-ai/longcat-single-avatar/image-audio-to-video`
 
-The continuation model identifiers in the current adapter are tentative and must be verified against provider documentation/account access before use. The open-source LongCat repository supports video continuation, but a hosted endpoint is a separate provider product. Do not represent continuation as operational until its endpoint is confirmed.
+The hosted continuation endpoint is not currently confirmed in the provider documentation inspected for this change. The UI includes the workflow, but the API returns HTTP 503 until a confirmed fal model slug is configured in the server-side `LONGCAT_CONTINUATION_MODEL` variable. The value must match `fal-ai/longcat-video/<endpoint-slug>`. The open-source repository supports video continuation, but a hosted endpoint is a separate provider product; do not represent continuation as operational until it is verified.
 
 ## Configuration
 
