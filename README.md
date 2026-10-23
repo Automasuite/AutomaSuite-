@@ -42,6 +42,16 @@ The migration is intentionally stored in source control and has **not** been app
 - Messaging integrations must use approved APIs and respect consent, opt-outs, rate limits, and platform policies.
 - Keep this repository and its deployment isolated from KSI Intelligence and other production systems.
 
+## LongCat Video Studio (feature branch)
+
+A separate `/video-studio` route adds a hosted-inference UI for LongCat text-to-video, image-to-video, and audio-driven avatar generation. The server-side `/api/video` route submits jobs to fal.ai and polls the queue without exposing the provider key to the browser.
+
+- Configure `FAL_KEY` only in a server environment after approval; never expose it with a `NEXT_PUBLIC_` variable.
+- Video continuation is shown in the UI but remains gated until the hosted endpoint is confirmed. Set `LONGCAT_CONTINUATION_MODEL` only after verifying the exact fal model slug.
+- The integration does not install model weights, create database tables, change secrets, or deploy the application.
+- Before merge, run lint/build checks and test each provider workflow with an approved test key while checking costs and queue response shapes.
+- See [LongCat Video Studio setup and limitations](docs/longcat-video-integration.md).
+
 ## Next implementation steps
 
 1. Provision a dedicated Supabase project and add secure authentication.
