@@ -83,6 +83,7 @@ function inputFor(mode: Mode, body: Record<string, unknown>) {
 }
 
 export async function POST(request: NextRequest) {
+  if (process.env.LONGCAT_VIDEO_ENABLED !== "true") return jsonError("Video generation is disabled until the feature is explicitly enabled in a non-production environment.", 503);
   const apiKey = process.env.FAL_KEY;
   if (!apiKey) return jsonError("Video generation is not configured yet. Add FAL_KEY to the server environment after approval.", 503);
 
@@ -125,6 +126,7 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  if (process.env.LONGCAT_VIDEO_ENABLED !== "true") return jsonError("Video generation is disabled until the feature is explicitly enabled in a non-production environment.", 503);
   const apiKey = process.env.FAL_KEY;
   if (!apiKey) return jsonError("Video generation is not configured yet.", 503);
 
