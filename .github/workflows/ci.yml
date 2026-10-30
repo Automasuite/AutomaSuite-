@@ -2,7 +2,7 @@ name: LeadGen Pro checks
 
 on:
   push:
-    branches: [main]
+    branches: [main, feat/vanta-agent-os-lead-foundation]
   pull_request:
     branches: [main]
 
