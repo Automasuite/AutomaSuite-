@@ -1,17 +1,53 @@
-# AutomaSuite LeadGen Pro
+# AutomaSuite Growth Engine
 
-A lead-generation and growth workspace from AutomaSuite. The first MVP focuses on a responsive dashboard, lead capture, lead status management, and signal-led next actions.
+A configurable, multi-tenant business growth platform from AutomaSuite. It brings enquiry capture, lead management, customer intelligence, knowledge assistance, appointments and workflow automation into one workspace.
 
-## Current MVP
+## Current repository foundation
 
-- Responsive overview dashboard with lead, priority, qualification, and conversion metrics.
-- Lead manager with search and status filters.
-- Add-lead form with source and buying-signal context.
-- Inline lead status updates and browser-local persistence for a demo workspace.
-- Sample records clearly intended for demonstration, not real performance claims.
-- Isolated Supabase schema for leads, lead activities, campaigns, and evidence-backed signals, with owner-scoped row-level security.
+- Existing LeadGen Pro dashboard retained as the CRM starting point.
+- Existing local-storage records remain demo-only and are not production customer data.
+- Neon PostgreSQL is the database platform for Growth Engine.
+- Neon Managed Better Auth provides the authentication and organisation-membership foundation.
+- A dedicated Neon project is used exclusively for this product; do not connect KSI Intelligence, DPF, or other product databases.
+- Organisation-scoped tables use PostgreSQL Row-Level Security (RLS).
+- Industry templates are seeded for real estate, retail and trading, professional services, construction and education/training.
 
-## Run locally
+## Database environments
+
+Neon project: `automasuite-growth-engine`
+
+- Primary branch: `main`
+- Development branch: `development`
+- Database: `neondb`
+- PostgreSQL: 18
+- Region: AWS EU West 2
+
+The Sprint 1 schema is recorded in `database/migrations/0001_growth_engine_foundation.sql`. It has been applied and verified on the Neon `development` branch only. Do not apply it to unrelated databases.
+
+## Authentication and tenant security
+
+Neon Auth owns user identities and organisation membership in the `neon_auth` schema. Application tables reference Neon Auth organisation IDs.
+
+The application server must:
+1. Validate the incoming Neon Auth session/JWT against the configured Neon Auth issuer/JWKS.
+2. Derive the user ID and active organisation from the verified session, never from untrusted client-supplied identity claims.
+3. Open a transaction and set verified JWT claims transaction-locally using `request.jwt.claims`.
+4. Execute tenant data operations as the restricted `growth_app` database role (which has `NOBYPASSRLS`).
+5. Use organisation membership checks enforced by PostgreSQL RLS in addition to application-level permission checks.
+
+Never expose the database connection string, database owner credentials, Neon Auth server secrets, or privileged credentials to browser code. Use a server-only environment configuration. Do not use the database owner role for ordinary tenant data queries.
+
+## Industry templates
+
+- Real Estate
+- Retail & Trading
+- Professional Services
+- Construction & Development
+- Education & Training
+
+Templates configure business fields, qualification questions, pipeline stages and operational defaults. They do not create separate codebases or bypass tenant isolation.
+
+## Local development
 
 Requirements: Node.js 20+ and npm.
 
@@ -22,30 +58,21 @@ npm run dev
 
 Open http://localhost:3000.
 
-The current UI uses demo records stored in the browser's local storage. This is useful for previewing the workflow, but it is not shared, backed up, or suitable for multi-user production.
-
-## Database setup — separate project required
-
-1. Create a dedicated Supabase project for AutomaSuite LeadGen Pro.
-2. Apply `supabase/migrations/202610150001_leadgen_core.sql` to that project only.
-3. Configure Supabase URL and publishable key once authentication and the server/client data adapters are implemented.
-4. Do not point this product at the existing AutomaSuite shared database or KSI Intelligence database.
-
-The migration is intentionally stored in source control and has **not** been applied to any existing database.
+The dashboard currently includes demo-only browser persistence. Neon Auth and the tenant foundation have been provisioned on the development database, but the frontend authentication flow and CRM database adapter still need to be connected and tested.
 
 ## Product principles
 
-- Brand: **AutomaSuite**.
-- Product: **LeadGen Pro**.
-- Promise: find leads, engage with context, convert more customers, and grow revenue.
-- Signal-led outreach: recommend contact now, research/nurture, or don't contact yet based on evidence and fit.
-- Messaging integrations must use approved APIs and respect consent, opt-outs, rate limits, and platform policies.
-- Keep this repository and its deployment isolated from KSI Intelligence and other production systems.
+- Clarify customer needs before recommending actions.
+- Base lead-intelligence recommendations on evidence, fit and consent.
+- Do not invent customer intent, buying signals, prices, availability or outcomes.
+- Respect contact permissions, opt-outs and approved messaging APIs.
+- Keep every organisation's records and knowledge isolated.
+- Keep this repository and its deployment isolated from KSI Intelligence, DPF and other products.
 
 ## Next implementation steps
 
-1. Provision a dedicated Supabase project and add secure authentication.
-2. Replace browser-only storage with owner-scoped Supabase CRUD.
-3. Add activity timelines and campaign workflows.
-4. Integrate approved WhatsApp messaging and Taiwo AI after credentials and channel behavior are verified.
-5. Add tests, deployment checks, and production safeguards.
+1. Connect Neon Managed Better Auth to the Next.js application.
+2. Add a server-only Neon database adapter that verifies sessions and sets transaction-local JWT claims.
+3. Integrate organisation workspace creation and membership.
+4. Replace demo-only lead persistence with tenant-scoped database operations.
+5. Add integration and RLS isolation tests before production deployment.
