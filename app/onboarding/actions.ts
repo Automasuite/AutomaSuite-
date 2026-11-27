@@ -8,6 +8,29 @@ function makeSlug(value: string) {
   return value.toLowerCase().normalize("NFKD").replace(/[\\u0300-\\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48);
 }
 
+export async function completeWorkspaceSetup(formData: FormData) {
+  const { data: session } = await auth.getSession();
+  if (!session?.user) redirect("/auth/sign-in");
+  const industry = String(formData.get("industry") ?? "");
+  const allowed = new Set(["real_estate", "retail_trading", "professional_services", "construction", "education_training"]);
+  if (!allowed.has(industry)) redirect("/onboarding?error=invalid-input");
+
+  const { data: organizations } = await auth.organization.list();
+  const organization = organizations?.[0] as { id?: string; name?: string } | undefined;
+  if (!organization?.id || !organization.name) redirect("/onboarding?error=workspace-not-found");
+  try {
+    await provisionBusinessWorkspace({
+      userId: session.user.id,
+      organizationId: organization.id,
+      businessName: organization.name,
+      industryTemplateId: industry,
+    });
+  } catch {
+    redirect("/onboarding?error=database-provisioning-failed");
+  }
+  redirect("/");
+}
+
 export async function createWorkspace(formData: FormData) {
   const { data: session } = await auth.getSession();
   if (!session?.user) redirect("/auth/sign-in");
