@@ -24,3 +24,6 @@
 .onboarding-submit{margin-top:14px;height:45px;border:0;border-radius:9px;background:#0b995e;color:white;font-size:12px;font-weight:700}.onboarding-submit span{padding-left:9px}
 .onboarding-footnote{text-align:center;font-size:9px;color:#9aa3b3;margin:19px 0 0}
 @media(max-width:540px){.industry-options{grid-template-columns:1fr}.onboarding-card{border-radius:15px}}
+
+.onboarding-recovery{border:1px solid #f1e4c8;background:#fffaf0;border-radius:10px;padding:13px;margin:12px 0}
+.onboarding-recovery b{font-size:12px;color:#273550}.onboarding-recovery p{font-size:10px;color:#788399;line-height:1.6;margin:5px 0 0}
