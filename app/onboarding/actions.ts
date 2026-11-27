@@ -1,10 +1,11 @@
 "use server";
 
 import { auth } from "@/lib/auth/server";
+import { provisionBusinessWorkspace } from "@/lib/db/tenant-workspace";
 import { redirect } from "next/navigation";
 
 function makeSlug(value: string) {
-  return value.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48);
+  return value.toLowerCase().normalize("NFKD").replace(/[\\u0300-\\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48);
 }
 
 export async function createWorkspace(formData: FormData) {
@@ -21,10 +22,22 @@ export async function createWorkspace(formData: FormData) {
 
   const slugBase = makeSlug(businessName) || "business";
   const slug = `${slugBase}-${session.user.id.slice(0, 8).toLowerCase()}`;
-  const { error } = await auth.organization.create({ name: businessName, slug });
-  if (error) redirect("/onboarding?error=workspace-create-failed");
+  const { data: created, error } = await auth.organization.create({ name: businessName, slug });
+  if (error || !created || typeof (created as { id?: unknown }).id !== "string") {
+    redirect("/onboarding?error=workspace-create-failed");
+  }
 
-  // Industry-specific database provisioning is deliberately a separate, authenticated
-  // server-side step. Do not accept an organisation ID or membership from the browser.
-  redirect("/?setup=profile-required");
+  try {
+    await provisionBusinessWorkspace({
+      userId: session.user.id,
+      organizationId: (created as { id: string }).id,
+      businessName,
+      industryTemplateId: industry,
+    });
+  } catch {
+    // Keep the Auth organisation so a retry can safely provision its business profile.
+    redirect("/onboarding?error=database-provisioning-failed");
+  }
+
+  redirect("/");
 }
