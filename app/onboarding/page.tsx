@@ -57,6 +57,7 @@ export default async function OnboardingPage() {
           </div>
           <button className="onboarding-submit" type="submit">Create business workspace <span>→</span></button>
         </form>
+        )}
         <p className="onboarding-footnote">Your workspace is private to its authorised members.</p>
       </section>
     </main>
