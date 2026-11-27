@@ -31,22 +31,38 @@ Use Neon Auth's organisation and membership records as the identity source. Appl
 
 - `automasuite_growth_owner`: administrative/migration role; never use for ordinary tenant CRUD.
 - `growth_app`: restricted `NOLOGIN NOBYPASSRLS` role for application data operations.
-- `growth_app` is granted to the owner role so the server can assume it with `SET LOCAL ROLE growth_app` inside a transaction.
+- A separate `growth_runtime` login role is required for the deployed application. It must be `LOGIN NOINHERIT NOBYPASSRLS` and receive membership in `growth_app`. The runtime role must explicitly assume `growth_app` inside each transaction; it must not inherit its privileges outside that transaction.
+- Do not use a broad Neon admin role or owner connection for normal application requests.
 - Tenant tables use both `ENABLE ROW LEVEL SECURITY` and `FORCE ROW LEVEL SECURITY`.
 - Membership is checked against `neon_auth.member` using the verified JWT subject from transaction-local `request.jwt.claims`.
+
+### Runtime role provisioning (development branch only)
+
+Run this as the database owner in the Neon SQL editor after generating a unique password and storing it in a secure secret manager. Do not commit the password or paste it into chat:
+
+```sql
+CREATE ROLE growth_runtime
+  LOGIN NOINHERIT NOBYPASSRLS
+  PASSWORD 'REPLACE_WITH_A_UNIQUE_SECRET';
+GRANT growth_app TO growth_runtime;
+GRANT CONNECT ON DATABASE neondb TO growth_runtime;
+```
+
+If the role already exists, use `ALTER ROLE growth_runtime WITH LOGIN NOINHERIT NOBYPASSRLS PASSWORD '...';` and then re-apply the membership grant. The app connection string must use `growth_runtime`, not `automasuite_growth_owner`. The server must run `SET LOCAL ROLE growth_app` within the same transaction in which it sets verified claims. A direct query made as `growth_runtime` without assuming `growth_app` should have no tenant-table privileges.
 
 ## Required request flow
 
 1. Retrieve the server-side Neon Auth session.
-2. Verify the access token signature and claims against the JWKS URL; enforce issuer, audience where configured, expiry and subject.
-3. Determine the active organisation from the authenticated session and verify membership. Never trust an organisation ID supplied by the browser without checking membership.
-4. Begin a database transaction.
-5. Set the verified token payload transaction-locally:
+2. Obtain the signed access JWT from the Neon Auth server API; do not mistake the opaque session-cookie token for a JWT.
+3. Verify the JWT signature and claims against the configured JWKS URL; enforce the expected issuer, expiry and subject, and audience if configured.
+4. Determine the active organisation from the authenticated session and verify membership. Never trust an organisation ID supplied by the browser without checking membership.
+5. Begin a database transaction using the `growth_runtime` connection.
+6. Set the verified token payload transaction-locally:
    `SELECT set_config('request.jwt.claims', '<verified-claims-json>', true)`.
-6. Assume the restricted application role:
+7. Assume the restricted application role:
    `SET LOCAL ROLE growth_app`.
-7. Perform tenant-scoped reads/writes. RLS policies verify membership again inside PostgreSQL.
-8. Commit/rollback the transaction; transaction-local role and claims do not leak into another request.
+8. Perform tenant-scoped reads/writes. RLS policies verify membership again inside PostgreSQL.
+9. Commit/rollback the transaction; transaction-local role and claims do not leak into another request.
 
 The implementation must not use a persistent session-level JWT setting. Do not use the owner role for tenant reads/writes. Do not accept user IDs, roles or organisation membership from client-side metadata as authoritative.
 
@@ -77,5 +93,6 @@ Industry templates seeded:
 - Tenant tables return no records when no verified JWT claims are present.
 - RLS and FORCE RLS are enabled on all five tenant tables.
 - `growth_app.rolbypassrls = false`.
+- The `growth_runtime` login role has not yet been provisioned; no runtime database credential is stored in the repository.
 
-This verifies the database foundation, not the end-to-end sign-in experience. Frontend authentication, token verification, server-only database adapter, organisation onboarding and cross-tenant integration tests remain to be implemented.
+This verifies the database foundation, not the end-to-end sign-in experience. Frontend authentication, signed-JWT retrieval/verification, server-only database adapter, organisation onboarding and cross-tenant integration tests remain to be implemented.
