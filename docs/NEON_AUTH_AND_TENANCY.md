@@ -96,3 +96,23 @@ Industry templates seeded:
 - The `growth_runtime` login role has not yet been provisioned; no runtime database credential is stored in the repository.
 
 This verifies the database foundation, not the end-to-end sign-in experience. Frontend authentication, signed-JWT retrieval/verification, server-only database adapter, organisation onboarding and cross-tenant integration tests remain to be implemented.
+
+
+## Server-side workspace provisioning adapter
+
+Implementation: `lib/db/tenant-workspace.ts`.
+
+- Calls Neon Auth's server-side `auth.token()` endpoint to obtain the signed access JWT. Do not use `getSession().data.session.token` as a JWT; that is the opaque session-cookie identifier.
+- Verifies the JWT signature through the configured JWKS endpoint, enforces the explicitly configured issuer and matches `sub` to the authenticated session user.
+- Opens a database transaction, sets the verified claims with transaction-local `set_config(..., true)`, then uses `SET LOCAL ROLE growth_app`.
+- Checks the current user's organisation membership again in PostgreSQL before inserting the business profile, settings, industry pipeline stages, onboarding progress and audit event.
+- Onboarding retries use the authenticated user's organisation list; no organisation ID is accepted from form input.
+- The workspace profile and default pipeline are written atomically. If provisioning fails, the Auth organisation remains and the onboarding page offers a recovery path.
+
+Before enabling this flow in a running environment:
+1. Provision the dedicated `growth_runtime` role with `LOGIN NOINHERIT NOBYPASSRLS`, grant it membership in `growth_app`, and set its connection string only in the deployment secret store.
+2. Set `NEON_AUTH_ISSUER` to the exact `iss` claim observed from a verified Neon Auth access JWT. Do not guess the issuer.
+3. Install dependencies and run type-check, lint, production build, sign-in and onboarding tests.
+4. Test tenant isolation with two independent test organisations and verify a member cannot read or write the other organisation's rows.
+
+The adapter is committed but has not yet been compiled or executed against a live authenticated application session. The development database currently contains the five tenant foundation tables, but its role list still has only `growth_app` and `automasuite_growth_owner`; `growth_runtime` is not yet provisioned.
