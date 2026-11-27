@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS public.prospect_contacts (
   FOREIGN KEY (organization_id, workspace_id)
     REFERENCES public.growth_workspaces(organization_id, id) ON DELETE CASCADE,
   FOREIGN KEY (organization_id, company_id)
-    REFERENCES public.prospect_companies(organization_id, id) ON DELETE SET NULL (company_id)
+    REFERENCES public.prospect_companies(organization_id, id) ON DELETE SET NULL (company_id) (company_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.business_signals (
@@ -109,7 +109,7 @@ CREATE TABLE IF NOT EXISTS public.business_signals (
   FOREIGN KEY (organization_id, workspace_id)
     REFERENCES public.growth_workspaces(organization_id, id) ON DELETE CASCADE,
   FOREIGN KEY (organization_id, company_id)
-    REFERENCES public.prospect_companies(organization_id, id) ON DELETE SET NULL,
+    REFERENCES public.prospect_companies(organization_id, id) ON DELETE SET NULL (company_id),
   FOREIGN KEY (organization_id, contact_id)
     REFERENCES public.prospect_contacts(organization_id, id) ON DELETE SET NULL (contact_id)
 );
@@ -138,9 +138,9 @@ CREATE TABLE IF NOT EXISTS public.research_evidence (
   FOREIGN KEY (organization_id, workspace_id)
     REFERENCES public.growth_workspaces(organization_id, id) ON DELETE CASCADE,
   FOREIGN KEY (organization_id, company_id)
-    REFERENCES public.prospect_companies(organization_id, id) ON DELETE SET NULL,
+    REFERENCES public.prospect_companies(organization_id, id) ON DELETE SET NULL (company_id),
   FOREIGN KEY (organization_id, signal_id)
-    REFERENCES public.business_signals(organization_id, id) ON DELETE SET NULL (signal_id)
+    REFERENCES public.business_signals(organization_id, id) ON DELETE SET NULL (signal_id) (signal_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.problem_hypotheses (
@@ -170,7 +170,7 @@ CREATE TABLE IF NOT EXISTS public.problem_hypotheses (
   FOREIGN KEY (organization_id, company_id)
     REFERENCES public.prospect_companies(organization_id, id) ON DELETE CASCADE,
   FOREIGN KEY (organization_id, signal_id)
-    REFERENCES public.business_signals(organization_id, id) ON DELETE SET NULL
+    REFERENCES public.business_signals(organization_id, id) ON DELETE SET NULL (signal_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.hypothesis_evidence (
