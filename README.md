@@ -58,7 +58,7 @@ npm run dev
 
 Open http://localhost:3000.
 
-The dashboard currently includes demo-only browser persistence. Neon Auth and the tenant foundation have been provisioned on the development database, but the frontend authentication flow and CRM database adapter still need to be connected and tested.
+The dashboard still uses demo-only browser persistence. Neon Auth server/client scaffolding, authentication routes, account/organisation views and protected workspace routing have been added on the development branch. The frontend sign-in flow has not yet been build-tested or end-to-end verified, and the CRM database adapter remains to be connected.
 
 ## Product principles
 
@@ -71,8 +71,9 @@ The dashboard currently includes demo-only browser persistence. Neon Auth and th
 
 ## Next implementation steps
 
-1. Connect Neon Managed Better Auth to the Next.js application.
-2. Add a server-only Neon database adapter that verifies sessions and sets transaction-local JWT claims.
-3. Integrate organisation workspace creation and membership.
-4. Replace demo-only lead persistence with tenant-scoped database operations.
-5. Add integration and RLS isolation tests before production deployment.
+1. Configure local/deployment environment variables from `.env.example` without committing secrets.
+2. Build and verify the Neon Auth screens, session flow and organisation management.
+3. Add a server-only Neon database adapter that verifies sessions and sets transaction-local JWT claims before assuming `growth_app`.
+4. Integrate organisation workspace creation and business onboarding.
+5. Replace demo-only lead persistence with tenant-scoped database operations.
+6. Add integration and cross-tenant RLS tests before production deployment.
