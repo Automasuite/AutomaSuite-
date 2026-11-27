@@ -60,7 +60,7 @@ CREATE TABLE IF NOT EXISTS public.prospect_companies (
   FOREIGN KEY (organization_id, workspace_id)
     REFERENCES public.growth_workspaces(organization_id, id) ON DELETE CASCADE,
   FOREIGN KEY (organization_id, segment_id)
-    REFERENCES public.prospect_segments(organization_id, id) ON DELETE SET NULL
+    REFERENCES public.prospect_segments(organization_id, id) ON DELETE SET NULL (segment_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.prospect_contacts (
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS public.prospect_contacts (
   FOREIGN KEY (organization_id, workspace_id)
     REFERENCES public.growth_workspaces(organization_id, id) ON DELETE CASCADE,
   FOREIGN KEY (organization_id, company_id)
-    REFERENCES public.prospect_companies(organization_id, id) ON DELETE SET NULL
+    REFERENCES public.prospect_companies(organization_id, id) ON DELETE SET NULL (company_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.business_signals (
@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS public.business_signals (
   FOREIGN KEY (organization_id, company_id)
     REFERENCES public.prospect_companies(organization_id, id) ON DELETE SET NULL,
   FOREIGN KEY (organization_id, contact_id)
-    REFERENCES public.prospect_contacts(organization_id, id) ON DELETE SET NULL
+    REFERENCES public.prospect_contacts(organization_id, id) ON DELETE SET NULL (contact_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.research_evidence (
@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS public.research_evidence (
   FOREIGN KEY (organization_id, company_id)
     REFERENCES public.prospect_companies(organization_id, id) ON DELETE SET NULL,
   FOREIGN KEY (organization_id, signal_id)
-    REFERENCES public.business_signals(organization_id, id) ON DELETE SET NULL
+    REFERENCES public.business_signals(organization_id, id) ON DELETE SET NULL (signal_id)
 );
 
 CREATE TABLE IF NOT EXISTS public.problem_hypotheses (
@@ -213,7 +213,7 @@ CREATE TABLE IF NOT EXISTS public.opportunity_assessments (
   FOREIGN KEY (organization_id, company_id)
     REFERENCES public.prospect_companies(organization_id, id) ON DELETE CASCADE,
   FOREIGN KEY (organization_id, hypothesis_id)
-    REFERENCES public.problem_hypotheses(organization_id, id) ON DELETE SET NULL
+    REFERENCES public.problem_hypotheses(organization_id, id) ON DELETE SET NULL (hypothesis_id)
 );
 
 CREATE INDEX IF NOT EXISTS growth_workspaces_org_active_idx
