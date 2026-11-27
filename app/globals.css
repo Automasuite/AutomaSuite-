@@ -4,3 +4,23 @@
 @media(max-width:1150px){.sidebar{width:220px}.content{padding:27px 24px}.topbar{padding:0 24px}.section-grid{grid-template-columns:minmax(0,1.5fr) minmax(245px,1fr)}.metric-grid{gap:10px}.metric-card{padding:14px}.welcome-right{max-width:220px}}
 @media(max-width:900px){.sidebar{width:74px;padding:22px 10px 13px}.brand{padding:0 5px 30px}.brand-copy,.workspace-label,.workspace-switch,.nav-label,.nav-item:not(.active){}.brand-copy,.workspace-label,.workspace-switch,.nav-label,.nav-item{font-size:0}.brand-copy,.workspace-label,.workspace-switch,.nav-label{display:none}.nav-item{justify-content:center;padding:13px 8px}.nav-icon{font-size:20px}.nav-count{display:none}.help-card{padding:9px;text-align:center}.help-card>b,.help-card p,.help-card button{display:none}.help-icon{margin:auto}.profile{justify-content:center}.profile>div:nth-child(2),.profile .dots{display:none}.section-grid{grid-template-columns:1fr}.right-column{display:grid;grid-template-columns:1fr 1fr}.welcome-right{display:none}.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.sidebar{width:56px;padding:17px 6px 10px}.brand-mark{width:36px;height:36px;font-size:23px}.brand{padding:0 2px 26px}.topbar{height:56px;padding:0 14px}.top-actions{gap:10px}.environment{font-size:9px;padding:6px}.content{padding:22px 13px 17px}.page-heading{align-items:flex-start;flex-direction:column;gap:14px}.page-heading h1{font-size:26px}.page-heading p{font-size:11px}.page-heading .primary-button{align-self:stretch}.welcome-strip{padding:12px;gap:9px}.welcome-symbol{width:31px;height:31px;flex-shrink:0}.welcome-strip p{line-height:1.5}.metric-grid{gap:9px}.metric-card{padding:12px}.metric-value{font-size:24px}.metric-note{font-size:8px}.right-column{grid-template-columns:1fr}.panel-heading{padding:15px 13px}.table-tools{padding:0 12px 12px}.table-wrap table{min-width:680px}.table-footer{padding:12px;font-size:8px}.footer{flex-direction:column;gap:7px}.form-row{grid-template-columns:1fr;gap:0}.lead-modal{padding:19px}.modal-top h2{font-size:20px}}
+
+
+/* Business onboarding */
+.onboarding-shell{min-height:100vh;display:grid;place-items:center;padding:32px 18px;background:radial-gradient(circle at 10% 5%,#e8f8ef 0,transparent 32%),#f7f9fc}
+.onboarding-card{width:min(100%,650px);background:#fff;border:1px solid #e7edf1;border-radius:20px;padding:clamp(22px,5vw,42px);box-shadow:0 24px 70px #13213d0d}
+.onboarding-brand{display:flex;align-items:center;gap:11px;font:700 15px Manrope,sans-serif;color:#172642}
+.onboarding-brand b{color:#0a965c}.onboarding-mark{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(145deg,#0aa85e,#0c7bc7);color:white;font-size:23px;font-weight:800}
+.onboarding-kicker{margin:35px 0 9px;color:#0a965c;font-size:9px;font-weight:800;letter-spacing:1.5px}
+.onboarding-card h1{font:800 clamp(25px,4vw,34px) Manrope,sans-serif;letter-spacing:-1px;margin:0;color:#172642}
+.onboarding-intro{font-size:12px;line-height:1.7;color:#7b869b;margin:10px 0 25px;max-width:500px}
+.onboarding-form{display:flex;flex-direction:column;gap:10px}.onboarding-form>label{font-size:11px;font-weight:700;color:#35425b;margin-top:8px}
+.onboarding-form>input{height:43px;border:1px solid #e1e7ee;border-radius:9px;padding:0 12px;font-size:12px;color:#172642}
+.industry-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:2px}
+.industry-option{display:flex;align-items:flex-start;gap:9px;border:1px solid #e7edf1;border-radius:10px;padding:12px;cursor:pointer;min-height:70px}
+.industry-option:has(input:checked){border-color:#72c99b;background:#f2fbf6}
+.industry-option input{margin:2px 0 0;accent-color:#0b995e}
+.industry-option span{display:flex;flex-direction:column;gap:5px}.industry-option b{font-size:11px;color:#263551}.industry-option small{font-size:9px;line-height:1.5;color:#8590a2}
+.onboarding-submit{margin-top:14px;height:45px;border:0;border-radius:9px;background:#0b995e;color:white;font-size:12px;font-weight:700}.onboarding-submit span{padding-left:9px}
+.onboarding-footnote{text-align:center;font-size:9px;color:#9aa3b3;margin:19px 0 0}
+@media(max-width:540px){.industry-options{grid-template-columns:1fr}.onboarding-card{border-radius:15px}}
